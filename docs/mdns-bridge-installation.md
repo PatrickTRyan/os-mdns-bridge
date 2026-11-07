@@ -127,6 +127,6 @@ Sonos
 Chromecast
 Home Assistant
 
-Milestone 1:
-Plugin architecture drafted
-
+Milestone 1
+-----------
+Initial plugin architecture drafted
