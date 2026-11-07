@@ -126,3 +126,7 @@ AirPlay
 Sonos
 Chromecast
 Home Assistant
+
+Milestone 1:
+Plugin architecture drafted
+
