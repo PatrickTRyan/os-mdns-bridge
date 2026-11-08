@@ -1,8 +1,0 @@
-<menu>
-    <Services>
-        <MDNSBridge
-            VisibleName="mDNS Bridge"
-            cssClass="fa fa-random fa-fw"
-            url="/ui/mdnsbridge"/>
-    </Services>
-</menu>
