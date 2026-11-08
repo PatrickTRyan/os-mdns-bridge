@@ -33,6 +33,7 @@
 
         <allowinboundfilters type="TextField">
             <Required>N</Required>
+            <FieldSeparator>,</FieldSeparator>
         </allowinboundfilters>
 
     </items>
