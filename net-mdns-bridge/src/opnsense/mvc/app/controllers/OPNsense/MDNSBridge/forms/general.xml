@@ -16,7 +16,8 @@
         <id>mdnsbridge.enablecarp</id>
         <label>Enable CARP Failover</label>
         <type>checkbox</type>
-        <help>For CARP high-availability pairs only. When checked, the service runs only while this firewall is CARP master. On a firewall without CARP, the service will not start if this is checked.</help>    </field>
+        <help>For CARP high-availability pairs only. When checked, the service runs only while this firewall is CARP master. On a firewall without CARP, the service will not start if this is checked.</help>
+    </field>
 
     <field>
         <id>mdnsbridge.interfaces</id>
