@@ -1,0 +1,289 @@
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  2:53 PM                docs
+d----           11/7/2026  3:16 PM                plugin
+d----           11/6/2026  3:20 PM                research
+d----           11/6/2026  1:26 PM                screenshots
+d----           11/6/2026  4:37 PM                src
+-a---           11/6/2026  1:23 PM             66 .gitattributes
+-a---           11/7/2026  2:44 PM           3466 .gitignore
+-a---           11/7/2026  3:50 PM              0 dir_list_mdns-bridge.txt
+-a---           11/7/2026  3:12 PM          12770 dir_list.txt
+-a---           11/6/2026  1:23 PM           1085 LICENSE
+-a---           11/6/2026  1:23 PM             70 README.md
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\docs
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/7/2026  2:53 PM            441 Architecture.md
+-a---           11/6/2026  1:48 PM           6010 Lab-Build.md
+-a---           11/7/2026  2:39 PM           1942 mdns-bridge-installation.md
+-a---           11/6/2026  4:33 PM            517 runtime-layout.md
+-a---           11/6/2026  1:50 PM            424 ToDo.md
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  2:49 PM                src
+-a---           11/7/2026  3:30 PM            288 Makefile
+-a---           11/7/2026  3:31 PM            547 pkg-descr
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  2:48 PM                etc
+d----           11/7/2026  2:49 PM                opnsense
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\etc
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  2:49 PM                inc
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\etc\inc
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:33 PM                plugins.inc.d
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\etc\inc\plugins.inc.d
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/7/2026  3:49 PM            927 mdnsbridge.inc
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  2:51 PM                mvc
+d----           11/7/2026  3:10 PM                service
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:08 PM                app
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:05 PM                controllers
+d----           11/7/2026  3:00 PM                models
+d----           11/7/2026  3:08 PM                views
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\controllers
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:06 PM                OPNsense
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\controllers\OPNsense
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:07 PM                MDNSBridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\controllers\OPNsense\MDNSBridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:07 PM                Api
+d----           11/7/2026  3:07 PM                forms
+-a---           11/6/2026  5:19 PM            432 IndexController.php
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\controllers\OPNsense\MDNSBridge\Api
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM            515 ServiceController.php
+-a---           11/6/2026  4:52 PM            377 SettingsController.php
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\controllers\OPNsense\MDNSBridge\forms
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM           1551 general.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\models
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:00 PM                OPNsense
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\models\OPNsense
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:43 PM                MDNSBridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\models\OPNsense\MDNSBridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:01 PM                ACL
+d----           11/7/2026  3:01 PM                Menu
+-a---           11/7/2026  3:42 PM            183 MDNSBridge.php
+-a---           11/6/2026  5:21 PM           1018 MDNSBridge.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\models\OPNsense\MDNSBridge\ACL
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM            262 ACL.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\models\OPNsense\MDNSBridge\Menu
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:00 PM            189 Menu.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\views
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:08 PM                OPNsense
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\views\OPNsense
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:09 PM                MDNSBridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\mvc\app\views\OPNsense\MDNSBridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:05 PM           2286 index.volt
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:09 PM                conf
+d----           11/7/2026  3:11 PM                templates
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service\conf
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:10 PM                actions.d
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service\conf\actions.d
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  4:52 PM            371 actions_mdnsbridge.conf
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service\templates
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:11 PM                OPNsense
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service\templates\OPNsense
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/7/2026  3:11 PM                MDNSBridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\plugin\src\opnsense\service\templates\OPNsense\MDNSBridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM             44 +TARGETS
+-a---           11/7/2026  2:24 PM           1120 mdnsbridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\research
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  4:02 PM           1248 mdns-repeater-architecture.md
+-a---           11/6/2026  2:11 PM            262 mdns-repeater-notes.md
+-a---           11/6/2026  3:46 PM           3773 mdns-repeater-tree-files.txt
+-a---           11/6/2026  3:42 PM         313060 mdns-repeater-tree.txt
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/6/2026  5:04 PM                draft-plugin
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/6/2026  4:39 PM                controllers
+d----           11/6/2026  4:39 PM                forms
+d----           11/6/2026  5:00 PM                models
+d----           11/6/2026  4:38 PM                notes
+d----           11/6/2026  4:39 PM                service
+d----           11/6/2026  5:04 PM                views
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\controllers
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM            432 IndexController.php
+-a---           11/6/2026  5:19 PM            515 ServiceController.php
+-a---           11/6/2026  4:52 PM            377 SettingsController.php
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\forms
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM           1551 general.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\models
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/6/2026  5:01 PM                ACL
+d----           11/6/2026  4:59 PM                Menu
+-a---           11/6/2026  5:21 PM           1018 MDNSBridge.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\models\ACL
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM            262 ACL.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\models\Menu
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:00 PM            189 Menu.xml
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\service
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/6/2026  4:37 PM                templates
+-a---           11/6/2026  4:52 PM            371 actions_mdnsbridge.conf
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\service\templates
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           11/6/2026  4:39 PM                MDNSBridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\service\templates\MDNSBridge
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:19 PM             44 +TARGETS
+-a---           11/7/2026  2:24 PM           1120 mdnsbridge
+
+    Directory: W:\Dev\GitHub\os-mdns-bridge\src\draft-plugin\views
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---           11/6/2026  5:05 PM           2286 index.volt
+
