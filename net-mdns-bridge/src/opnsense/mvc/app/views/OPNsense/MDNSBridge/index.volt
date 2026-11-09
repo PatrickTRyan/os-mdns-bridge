@@ -85,10 +85,6 @@ $("#reconfigureAct").SimpleActionButton({
                 data-label="{{ lang._('Apply') }}"
                 type="button"></button>
 
-                {{ lang._('Apply') }}
-
-            </button>
-
             <br/><br/>
 
         </div>
