@@ -1,10 +1,9 @@
 <model>
     <mount>//OPNsense/MDNSBridge</mount>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <description>mDNS Bridge settings</description>
 
     <items>
-
         <enabled type="BooleanField">
             <Default>0</Default>
             <Required>Y</Required>
@@ -31,11 +30,32 @@
             <Required>Y</Required>
         </disableipv6>
 
+        <inboundfilterpresets type="OptionField">
+            <Required>N</Required>
+            <Multiple>Y</Multiple>
+            <OptionValues>
+                <airplay>AirPlay</airplay>
+                <raop>AirPlay Audio / RAOP</raop>
+                <googlecast>Google Cast</googlecast>
+                <hap>HomeKit Accessory Protocol</hap>
+                <homekit>HomeKit legacy service</homekit>
+                <companionlink>Apple Companion Link</companionlink>
+                <sleepproxy>Apple Sleep Proxy</sleepproxy>
+                <ipp>IPP Printing</ipp>
+                <ipps>Secure IPP Printing</ipps>
+                <printer>Legacy Network Printer</printer>
+                <pdldatastream>PDL Data Stream Printing</pdldatastream>
+                <scanner>Network Scanner</scanner>
+                <smb>SMB File Sharing</smb>
+                <ssh>Secure Shell</ssh>
+                <http>HTTP Web Service</http>
+                <https>HTTPS Web Service</https>
+                <workstation>Workstation Discovery</workstation>
+            </OptionValues>
+        </inboundfilterpresets>
+
         <allowinboundfilters type="TextField">
             <Required>N</Required>
-            <FieldSeparator>,</FieldSeparator>
         </allowinboundfilters>
-
     </items>
-
 </model>
