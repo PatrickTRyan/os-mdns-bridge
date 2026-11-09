@@ -54,8 +54,11 @@
             </OptionValues>
         </inboundfilterpresets>
 
-        <allowinboundfilters type="TextField">
+        <allowinboundfilters type="CSVListField">
             <Required>N</Required>
+            <MaskPerItem>Y</MaskPerItem>
+            <Mask>/^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*$/</Mask>
+            <ValidationMessage>Use dot-separated labels made of letters, digits, underscores or hyphens, for example _matter or _matter._tcp.</ValidationMessage>
         </allowinboundfilters>
     </items>
 </model>
