@@ -1,0 +1,67 @@
+# Builds mdns-bridge + os-mdns-bridge in a FreeBSD 15.1 VM (the base of
+# OPNsense 26.7), signs the pkg repository and publishes it to GitHub Pages.
+#
+# One-time setup (see README, "Building the repository"):
+#   - Settings > Pages > Source: GitHub Actions
+#   - Settings > Secrets and variables > Actions > PKG_SIGNING_KEY:
+#     the RSA private key in PEM format
+#   - commit the matching public key as packaging/mdnsbridge.pub
+#
+# Runs on a version tag (v1.0, v1.0_1, ...) that must match the Makefile, or
+# manually from the Actions tab. Each run replaces the published site, so
+# only the latest packages are served.
+
+name: Build package repository
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build packages and repository in FreeBSD 15.1
+        uses: vmactions/freebsd-vm@v1
+        env:
+          PKG_SIGNING_KEY: ${{ secrets.PKG_SIGNING_KEY }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        with:
+          release: "15.1"
+          usesh: true
+          envs: 'PKG_SIGNING_KEY GITHUB_REF_NAME'
+          prepare: |
+            pkg install -y git
+          run: |
+            set -e
+            umask 077
+            printf '%s\n' "$PKG_SIGNING_KEY" > /tmp/repo.key
+            [ "${GITHUB_REF_NAME#v}" != "${GITHUB_REF_NAME}" ] || unset GITHUB_REF_NAME
+            PKG_SIGNING_KEY_FILE=/tmp/repo.key sh packaging/build-repo.sh
+            rm -f /tmp/repo.key
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
