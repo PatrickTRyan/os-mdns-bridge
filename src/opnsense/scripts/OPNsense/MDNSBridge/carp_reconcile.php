@@ -64,13 +64,39 @@ function mdnsbridge_configured_interfaces(
 function mdnsbridge_has_master_vip(
     \OPNsense\MDNSBridge\MDNSBridge $model
 ): bool {
+    global $config;
+
     foreach (mdnsbridge_configured_interfaces($model) as $friendlyInterface) {
         $physicalInterface =
-            get_real_interface(
-                $friendlyInterface
-            );
+            $config['interfaces'][$friendlyInterface]['if'] ?? '';
 
-        if (empty($physicalInterface)) {
+        if (!is_string($physicalInterface) || $physicalInterface === '') {
+            mdnsbridge_carp_log(
+                sprintf(
+                    'Unable to resolve selected interface "%s".',
+                    $friendlyInterface
+                )
+            );
+            continue;
+        }
+
+        /*
+         * Permit valid FreeBSD device names such as hn1, vtnet1, vlan01,
+         * lagg0, bridge0, and pppoe0.
+         */
+        if (
+            preg_match(
+                '/^[A-Za-z0-9_.:-]+$/D',
+                $physicalInterface
+            ) !== 1
+        ) {
+            mdnsbridge_carp_log(
+                sprintf(
+                    'Ignoring invalid device name "%s" for interface "%s".',
+                    $physicalInterface,
+                    $friendlyInterface
+                )
+            );
             continue;
         }
 
@@ -91,7 +117,6 @@ function mdnsbridge_has_master_vip(
 
     return false;
 }
-
 /**
  * Create or remove the CARP marker and optionally manage the service.
  */
