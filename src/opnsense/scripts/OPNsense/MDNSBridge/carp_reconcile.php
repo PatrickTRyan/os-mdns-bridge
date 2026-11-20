@@ -66,7 +66,7 @@ function mdnsbridge_has_master_vip(
 ): bool {
     foreach (mdnsbridge_configured_interfaces($model) as $friendlyInterface) {
         $physicalInterface =
-            convert_friendly_interface_to_real_interface_name(
+            get_real_interface(
                 $friendlyInterface
             );
 
