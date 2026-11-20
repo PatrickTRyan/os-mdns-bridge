@@ -72,13 +72,27 @@ function ctl_log(string $message, int $priority = LOG_NOTICE): void
 
 /**
  * Run the rc script. Returns [exit code, combined output].
+ *
+ * mdns-bridge backgrounds itself with fork()/setsid() but does not close or
+ * redirect stdin/stdout/stderr, so the daemon inherits whatever they point
+ * to. If that were exec()'s output pipe, the pipe would never reach EOF and
+ * exec() would wait forever (which hung "configctl mdnsbridge start").
+ * Output therefore goes to a temporary file and stdin comes from /dev/null.
  */
 function rc(string $action): array
 {
-    $output = [];
+    $tmp = tempnam('/tmp', 'mdnsbridge.');
+    $ignored = [];
     $code = 0;
-    exec(MDNSBRIDGE_RC . ' ' . escapeshellarg($action) . ' 2>&1', $output, $code);
-    return [$code, implode("\n", $output)];
+    exec(sprintf(
+        '%s %s < /dev/null > %s 2>&1',
+        MDNSBRIDGE_RC,
+        escapeshellarg($action),
+        escapeshellarg($tmp)
+    ), $ignored, $code);
+    $output = trim((string)@file_get_contents($tmp));
+    @unlink($tmp);
+    return [$code, $output];
 }
 
 function is_running(): bool
