@@ -10,11 +10,11 @@
  * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ * this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -29,65 +29,6 @@
  */
 
 require_once('config.inc');
-require_once('util.inc');
-require_once('interfaces.inc');
-
-const MDNSBRIDGE_CARP_MARKER = '/var/run/mdns_bridge.CARP_MASTER';
-const MDNSBRIDGE_CARP_STATE_DIR = '/var/run/mdns_bridge.carp.d';
-const MDNSBRIDGE_CARP_LOCK = '/var/run/mdns_bridge.carp.lock';
-
-/**
- * Write a message to the system log.
- */
-function mdnsbridge_carp_log(string $message): void
-{
-    openlog('mdnsbridge-carp', LOG_PID, LOG_DAEMON);
-    syslog(LOG_NOTICE, $message);
-    closelog();
-}
-
-/**
- * Return the configured logical interface names.
- *
- * @return string[]
- */
-function mdnsbridge_configured_interfaces(
-    \OPNsense\MDNSBridge\MDNSBridge $model
-): array {
-    return array_values(array_filter(array_map(
-        'trim',
-        explode(',', (string)$model->interfaces)
-    )));
-}
-
-/**
- * Return true when one or more CARP MASTER state files remain.
- */
-function mdnsbridge_has_master_state(): bool
-{
-    $markers = glob(MDNSBRIDGE_CARP_STATE_DIR . '/*');
-
-    return is_array($markers) && count($markers) > 0;
-}
-
-/**
- * Update the global marker and service state.
- */
-function mdnsbridge_update_service(
-    \OPNsense\Core\Backend $backend
-): void {
-    if (mdnsbridge_has_master_state()) {
-        if (!file_exists(MDNSBRIDGE_CARP_MARKER)) {
-            touch(MDNSBRIDGE_CARP_MARKER);
-        }
-
-        $backend->configdRun('mdnsbridge start');
-        return;
-    }
-
-    @unlink(MDNSBRIDGE_CARP_MARKER);
-    $backend->configdRun('mdnsbridge stop');
-}
 
 /** @var \OPNsense\MDNSBridge\MDNSBridge $model */
 $model = new \OPNsense\MDNSBridge\MDNSBridge();
@@ -103,102 +44,29 @@ $subsystem = isset($argv[1]) ? trim((string)$argv[1]) : '';
 $type = isset($argv[2]) ? strtoupper(trim((string)$argv[2])) : '';
 
 if (
-    !in_array($type, ['MASTER', 'BACKUP'], true) ||
-    preg_match('/^([0-9]+)@([A-Za-z0-9_.:-]+)$/D', $subsystem, $matches) !== 1
+    preg_match('/^[0-9]+@[A-Za-z0-9_.:-]+$/D', $subsystem) !== 1 ||
+    !in_array($type, ['MASTER', 'BACKUP'], true)
 ) {
-    mdnsbridge_carp_log(
+    openlog('mdnsbridge-carp', LOG_PID, LOG_DAEMON);
+    syslog(
+        LOG_NOTICE,
         sprintf(
             'Ignoring invalid CARP event: subsystem="%s", type="%s"',
             $subsystem,
             $type
         )
     );
+    closelog();
+
     exit(1);
 }
 
-$vhid = $matches[1];
-$physicalInterface = $matches[2];
-$friendlyInterface =
-    convert_real_interface_to_friendly_interface_name($physicalInterface);
-
-if (
-    empty($friendlyInterface) ||
-    !in_array(
-        $friendlyInterface,
-        mdnsbridge_configured_interfaces($model),
-        true
-    )
-) {
-    exit(0);
-}
-
-if (
-    !is_dir(MDNSBRIDGE_CARP_STATE_DIR) &&
-    !mkdir(MDNSBRIDGE_CARP_STATE_DIR, 0755, true) &&
-    !is_dir(MDNSBRIDGE_CARP_STATE_DIR)
-) {
-    mdnsbridge_carp_log(
-        'Unable to create CARP state directory: ' .
-        MDNSBRIDGE_CARP_STATE_DIR
-    );
-    exit(1);
-}
-
-$lockHandle = fopen(MDNSBRIDGE_CARP_LOCK, 'c');
-
-if ($lockHandle === false || !flock($lockHandle, LOCK_EX)) {
-    mdnsbridge_carp_log('Unable to acquire the CARP state lock.');
-    exit(1);
-}
-
-$stateName = sprintf(
-    '%s@%s',
-    $vhid,
-    preg_replace('/[^A-Za-z0-9_.:-]/', '_', $physicalInterface)
-);
-
-$stateFile = MDNSBRIDGE_CARP_STATE_DIR . '/' . $stateName;
-
-/** @var \OPNsense\Core\Backend $backend */
 $backend = new \OPNsense\Core\Backend();
 
-try {
-    if ($type === 'MASTER') {
-        if (!touch($stateFile)) {
-            throw new \RuntimeException(
-                sprintf('Unable to create CARP state file: %s', $stateFile)
-            );
-        }
-
-        mdnsbridge_carp_log(
-            sprintf(
-                'CARP %s on %s is MASTER; enabling mDNS Bridge.',
-                $vhid,
-                $friendlyInterface
-            )
-        );
-    } else {
-        @unlink($stateFile);
-
-        mdnsbridge_carp_log(
-            sprintf(
-                'CARP %s on %s is BACKUP; recalculating mDNS Bridge state.',
-                $vhid,
-                $friendlyInterface
-            )
-        );
-    }
-
-    mdnsbridge_update_service($backend);
-} catch (\Throwable $error) {
-    mdnsbridge_carp_log($error->getMessage());
-
-    flock($lockHandle, LOCK_UN);
-    fclose($lockHandle);
-    exit(1);
-}
-
-flock($lockHandle, LOCK_UN);
-fclose($lockHandle);
+/*
+ * Recalculate the state of all selected CARP interfaces. Do not make a
+ * global service decision from one individual VIP transition.
+ */
+$backend->configdRun('mdnsbridge carp-reconcile-service');
 
 exit(0);

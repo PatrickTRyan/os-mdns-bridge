@@ -29,11 +29,32 @@
 namespace OPNsense\MDNSBridge\Api;
 
 use OPNsense\Base\ApiMutableServiceControllerBase;
+use OPNsense\Core\Backend;
 
 class ServiceController extends ApiMutableServiceControllerBase
 {
-    protected static $internalServiceClass = '\OPNsense\MDNSBridge\MDNSBridge';
+    protected static $internalServiceClass =
+        '\OPNsense\MDNSBridge\MDNSBridge';
+
     protected static $internalServiceTemplate = 'OPNsense/MDNSBridge';
+
     protected static $internalServiceEnabled = 'enabled';
+
     protected static $internalServiceName = 'mdnsbridge';
+
+    public function reconfigureAction()
+    {
+        if (!$this->request->isPost()) {
+            return ['status' => 'failed'];
+        }
+
+        /*
+         * Establish or remove the CARP marker before the inherited service
+         * reconfiguration evaluates the RC required_files setting.
+         */
+        $backend = new Backend();
+        $backend->configdRun('mdnsbridge carp-reconcile');
+
+        return parent::reconfigureAction();
+    }
 }
