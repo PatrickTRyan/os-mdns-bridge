@@ -1,0 +1,101 @@
+<form>
+    <field>
+        <id>iface.enabled</id>
+        <label>Enabled</label>
+        <type>checkbox</type>
+        <help>Include this interface in the bridge.</help>
+        <grid_view>
+            <formatter>rowtoggle</formatter>
+            <width>6em</width>
+        </grid_view>
+    </field>
+    <field>
+        <id>iface.interface</id>
+        <label>Interface</label>
+        <type>dropdown</type>
+        <help>mDNS is received on and forwarded to every enabled interface. Avoid WAN and other untrusted interfaces.</help>
+    </field>
+    <field>
+        <id>iface.disable_ipv4</id>
+        <label>Disable IPv4</label>
+        <type>checkbox</type>
+        <help>Do not forward mDNS over IPv4 on this interface. Has no effect if IPv4 is already disabled globally.</help>
+        <grid_view>
+            <formatter>boolean</formatter>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>iface.disable_ipv6</id>
+        <label>Disable IPv6</label>
+        <type>checkbox</type>
+        <help>Do not forward mDNS over IPv6 on this interface. Has no effect if IPv6 is already disabled globally.</help>
+        <grid_view>
+            <formatter>boolean</formatter>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <type>header</type>
+        <label>Inbound filter (received on this interface)</label>
+    </field>
+    <field>
+        <id>iface.inbound_mode</id>
+        <label>Inbound mode</label>
+        <type>dropdown</type>
+        <help>Applied to packets received on this interface, after the global filter. Controls what devices on this network can advertise to the others.</help>
+    </field>
+    <field>
+        <id>iface.inbound_presets</id>
+        <label>Inbound common services</label>
+        <type>select_multiple</type>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>iface.inbound_filters</id>
+        <label>Inbound custom filters</label>
+        <type>select_multiple</type>
+        <style>tokenize</style>
+        <allownew>true</allownew>
+        <help>See the help on the General tab for the filter format. In a deny list, the single entry &lt;all&gt; blocks every service received on this interface.</help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <type>header</type>
+        <label>Outbound filter (sent to this interface)</label>
+    </field>
+    <field>
+        <id>iface.outbound_mode</id>
+        <label>Outbound mode</label>
+        <type>dropdown</type>
+        <help>Applied to packets before they are sent on this interface, from any other interface. Controls what devices on this network can see. A peer rule for a specific source interface replaces this filter for packets from that source.</help>
+    </field>
+    <field>
+        <id>iface.outbound_presets</id>
+        <label>Outbound common services</label>
+        <type>select_multiple</type>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>iface.outbound_filters</id>
+        <label>Outbound custom filters</label>
+        <type>select_multiple</type>
+        <style>tokenize</style>
+        <allownew>true</allownew>
+        <help>In a deny list, the single entry &lt;all&gt; sends nothing to this interface unless a peer rule allows it.</help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>iface.description</id>
+        <label>Description</label>
+        <type>text</type>
+    </field>
+</form>

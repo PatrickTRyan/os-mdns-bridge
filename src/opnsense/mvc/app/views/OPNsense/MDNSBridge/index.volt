@@ -27,68 +27,85 @@
  #}
 
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
+        mapDataToFormUI({'frm_GeneralSettings': '/api/mdnsbridge/settings/get'}).done(function () {
+            formatTokenizersUI();
+            $('.selectpicker').selectpicker('refresh');
+        });
 
-    mapDataToFormUI({
-        'frm_GeneralSettings': "/api/mdnsbridge/settings/get"
-    }).done(function () {
+        $('#{{ formGridIface["table_id"] }}').UIBootgrid({
+            search: '/api/mdnsbridge/settings/search_iface',
+            get: '/api/mdnsbridge/settings/get_iface/',
+            set: '/api/mdnsbridge/settings/set_iface/',
+            add: '/api/mdnsbridge/settings/add_iface/',
+            del: '/api/mdnsbridge/settings/del_iface/',
+            toggle: '/api/mdnsbridge/settings/toggle_iface/'
+        });
 
-        formatTokenizersUI();
-        $('.selectpicker').selectpicker('refresh');
+        $('#{{ formGridPeer["table_id"] }}').UIBootgrid({
+            search: '/api/mdnsbridge/settings/search_peer',
+            get: '/api/mdnsbridge/settings/get_peer/',
+            set: '/api/mdnsbridge/settings/set_peer/',
+            add: '/api/mdnsbridge/settings/add_peer/',
+            del: '/api/mdnsbridge/settings/del_peer/',
+            toggle: '/api/mdnsbridge/settings/toggle_peer/'
+        });
+
+        /* Save the General tab, then let the button run service/reconfigure. */
+        $('#reconfigureAct').SimpleActionButton({
+            onPreAction: function () {
+                const dfObj = $.Deferred();
+                saveFormToEndpoint('/api/mdnsbridge/settings/set', 'frm_GeneralSettings', dfObj.resolve, true, dfObj.reject);
+                return dfObj;
+            },
+            onAction: function () {
+                loadGeneratedConfig();
+            }
+        });
+
+        function loadGeneratedConfig() {
+            ajaxGet('/api/mdnsbridge/service/showconfig', {}, function (data) {
+                $('#generated_config').text(data && data.config ? data.config : '');
+            });
+        }
+
+        $('a[href="#config"]').on('shown.bs.tab', loadGeneratedConfig);
 
         updateServiceControlUI('mdnsbridge');
     });
-
-$("#reconfigureAct").SimpleActionButton({
-    onPreAction: function () {
-        const dfObj = $.Deferred();
-        saveFormToEndpoint(
-            "/api/mdnsbridge/settings/set",
-            'frm_GeneralSettings',
-            dfObj.resolve,
-            true,
-            dfObj.reject
-        );
-        return dfObj;
-    }
-});
-
-    updateServiceControlUI('mdnsbridge');
-});
 </script>
 
-<section class="page-content-main">
+<ul class="nav nav-tabs" data-tabs="tabs" id="maintabs">
+    <li class="active"><a data-toggle="tab" href="#general">{{ lang._('General') }}</a></li>
+    <li><a data-toggle="tab" href="#interfaces">{{ lang._('Interfaces') }}</a></li>
+    <li><a data-toggle="tab" href="#peers">{{ lang._('Peer rules') }}</a></li>
+    <li><a data-toggle="tab" href="#config">{{ lang._('Generated configuration') }}</a></li>
+</ul>
 
-    <div class="content-box">
-        {{
-            partial(
-                "layout_partials/base_form",
-                {
-                    'fields': general,
-                    'id': 'frm_GeneralSettings'
-                }
-            )
-        }}
+<div class="tab-content content-box">
+    <div id="general" class="tab-pane fade in active">
+        {{ partial('layout_partials/base_form', ['fields': generalForm, 'id': 'frm_GeneralSettings']) }}
     </div>
-
-    <br/>
-
-    <div class="content-box">
-
-        <div class="col-md-12">
-
-            <br/>
-
-        <button class="btn btn-primary" id="reconfigureAct"
-                data-endpoint="/api/mdnsbridge/service/reconfigure"
-                data-service-widget="mdnsbridge"
-                data-label="{{ lang._('Apply') }}"
-                type="button"></button>
-
-            <br/><br/>
-
+    <div id="interfaces" class="tab-pane fade in">
+        <div class="col-md-12 __mt __mb">
+            {{ lang._('Each enabled entry is bridged. Inbound filters control what that network can advertise; outbound filters control what it can see. At least two entries are required.') }}
         </div>
-
+        {{ partial('layout_partials/base_bootgrid_table', formGridIface) }}
     </div>
+    <div id="peers" class="tab-pane fade in">
+        <div class="col-md-12 __mt __mb">
+            {{ lang._('Peer rules replace the outbound filter of the To interface for packets that come from one specific From interface.') }}
+        </div>
+        {{ partial('layout_partials/base_bootgrid_table', formGridPeer) }}
+    </div>
+    <div id="config" class="tab-pane fade in">
+        <div class="col-md-12 __mt __mb">
+            {{ lang._('The configuration file generated for mdns-bridge from the settings above, as last applied. Read-only.') }}
+        </div>
+        <pre id="generated_config" style="margin: 0 15px 15px 15px; white-space: pre-wrap;"></pre>
+    </div>
+</div>
 
-</section>
+{{ partial('layout_partials/base_apply_button', {'data_endpoint': '/api/mdnsbridge/service/reconfigure', 'data_service_widget': 'mdnsbridge'}) }}
+{{ partial('layout_partials/base_dialog', ['fields': formDialogIface, 'id': formGridIface['edit_dialog_id'], 'label': lang._('Edit bridge interface')]) }}
+{{ partial('layout_partials/base_dialog', ['fields': formDialogPeer, 'id': formGridPeer['edit_dialog_id'], 'label': lang._('Edit peer rule')]) }}

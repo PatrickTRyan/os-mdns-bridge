@@ -4,15 +4,15 @@
  * Copyright (C) 2026 Pat Ryan
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -24,37 +24,43 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 namespace OPNsense\MDNSBridge\Api;
 
 use OPNsense\Base\ApiMutableServiceControllerBase;
 use OPNsense\Core\Backend;
+use OPNsense\MDNSBridge\MDNSBridge;
 
+/**
+ * Service control. start/stop/restart/status are inherited and run the
+ * configd actions in actions_mdnsbridge.conf, which go through
+ * mdnsbridge_ctl.php so that CARP gating applies to GUI actions, the
+ * dashboard widget, HA sync and the CARP hook alike.
+ */
 class ServiceController extends ApiMutableServiceControllerBase
 {
-    protected static $internalServiceClass =
-        '\OPNsense\MDNSBridge\MDNSBridge';
-
+    protected static $internalServiceClass = '\OPNsense\MDNSBridge\MDNSBridge';
     protected static $internalServiceTemplate = 'OPNsense/MDNSBridge';
-
-    protected static $internalServiceEnabled = 'enabled';
-
+    protected static $internalServiceEnabled = 'general.enabled';
     protected static $internalServiceName = 'mdnsbridge';
 
-    public function reconfigureAction()
+    /**
+     * The daemon refuses to start with fewer than two interfaces, so
+     * "enabled" means the switch plus two enabled interface entries.
+     */
+    protected function serviceEnabled()
     {
-        if (!$this->request->isPost()) {
-            return ['status' => 'failed'];
-        }
+        return (new MDNSBridge())->isServiceEnabled();
+    }
 
-        /*
-         * Establish or remove the CARP marker before the inherited service
-         * reconfiguration evaluates the RC required_files setting.
-         */
-        $backend = new Backend();
-        $backend->configdRun('mdnsbridge carp-reconcile');
-
-        return parent::reconfigureAction();
+    /**
+     * Return the generated mdns-bridge.conf so the engineer can see exactly
+     * what the daemon is given. Read-only; GET is sufficient.
+     */
+    public function showconfigAction()
+    {
+        $output = (new Backend())->configdRun('mdnsbridge showconfig');
+        return ['status' => 'ok', 'config' => (string)$output];
     }
 }

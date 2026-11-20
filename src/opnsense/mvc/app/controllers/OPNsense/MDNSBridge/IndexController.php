@@ -4,15 +4,15 @@
  * Copyright (C) 2026 Pat Ryan
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
@@ -24,20 +24,19 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 namespace OPNsense\MDNSBridge;
 
 class IndexController extends \OPNsense\Base\IndexController
 {
-    /**
-     * mDNS Bridge index page
-     *
-     * @throws \Exception
-     */
     public function indexAction()
     {
-        $this->view->general = $this->getForm("general");
+        $this->view->generalForm = $this->getForm('general');
+        $this->view->formDialogIface = $this->getForm('dialogIface');
+        $this->view->formGridIface = $this->getFormGrid('dialogIface');
+        $this->view->formDialogPeer = $this->getForm('dialogPeer');
+        $this->view->formGridPeer = $this->getFormGrid('dialogPeer');
         $this->view->pick('OPNsense/MDNSBridge/index');
     }
 }

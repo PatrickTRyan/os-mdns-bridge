@@ -1,23 +1,30 @@
-mdns-bridge is a multicast DNS forwarding daemon developed by
+mdns-bridge forwards multicast DNS (Bonjour / DNS-SD) between network
+segments so that clients on one VLAN can discover services such as
+AirPlay, Google Cast, printers and HomeKit accessories on another.
+
+Unlike a plain mDNS repeater it filters what is forwarded: globally,
+per interface in both directions, and per source/destination interface
+pair, using allow or deny lists of service labels or host names.
+
+This plugin provides the OPNsense GUI, service control, CARP high
+availability support and logging for the mdns-bridge daemon by
 Denny Page.
 
-Unlike traditional mDNS repeaters, mdns-bridge supports
-service filtering and interface-specific forwarding policies.
-
-This plugin integrates mdns-bridge into OPNsense by providing:
-
-- Web GUI configuration
-- Service management
-- Configuration generation
-- Interface selection
-- Future service filtering controls
-
-The plugin is intended to simplify deployment of multicast DNS
-service discovery across segmented networks such as IoT,
-Guest, and User VLANs.
+WWW: https://github.com/dennypage/mdns-bridge
 
 Plugin Changelog
 ================
+
+1.0
+
+* Per-interface inbound and outbound filters, peer-specific outbound
+  filters, deny lists and the <all> deny-all filter
+* Per-interface IPv4/IPv6 control and optional decode warnings (-w)
+* CARP support now depends on one selected CARP VIP
+* Apply no longer reports an error on a CARP BACKUP node
+* Dedicated log file and a read-only view of the generated configuration
+* Restart after an address change on a bridged interface
+* Settings from 0.1 are migrated automatically
 
 0.1
 

@@ -1,72 +1,19 @@
-#!/usr/local/bin/php
-<?php
+#!/bin/sh
 
-/*
- * Copyright (C) 2022 Markus Reiter <me@reitermark.us>
- * Copyright (C) 2026 Pat Ryan
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
- * OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+# Copyright (C) 2026 Pat Ryan
+# All rights reserved. BSD 2-Clause License, see LICENSE.
+#
+# CARP event hook: $1 is "vhid@device", $2 is the new state.
+# The control script re-reads the actual state of the configured CARP
+# dependency, so the event itself is only a trigger. It does nothing when
+# mDNS Bridge is disabled or has no CARP dependency.
 
-require_once('config.inc');
+case "${2}" in
+MASTER|BACKUP|INIT)
+	;;
+*)
+	exit 0
+	;;
+esac
 
-/** @var \OPNsense\MDNSBridge\MDNSBridge $model */
-$model = new \OPNsense\MDNSBridge\MDNSBridge();
-
-if (
-    (string)$model->enabled !== '1' ||
-    (string)$model->enablecarp !== '1'
-) {
-    exit(0);
-}
-
-$subsystem = isset($argv[1]) ? trim((string)$argv[1]) : '';
-$type = isset($argv[2]) ? strtoupper(trim((string)$argv[2])) : '';
-
-if (
-    preg_match('/^[0-9]+@[A-Za-z0-9_.:-]+$/D', $subsystem) !== 1 ||
-    !in_array($type, ['MASTER', 'BACKUP'], true)
-) {
-    openlog('mdnsbridge-carp', LOG_PID, LOG_DAEMON);
-    syslog(
-        LOG_NOTICE,
-        sprintf(
-            'Ignoring invalid CARP event: subsystem="%s", type="%s"',
-            $subsystem,
-            $type
-        )
-    );
-    closelog();
-
-    exit(1);
-}
-
-$backend = new \OPNsense\Core\Backend();
-
-/*
- * Recalculate the state of all selected CARP interfaces. Do not make a
- * global service decision from one individual VIP transition.
- */
-$backend->configdRun('mdnsbridge carp-reconcile-service');
-
-exit(0);
+exec /usr/local/opnsense/scripts/OPNsense/MDNSBridge/mdnsbridge_ctl.php carp > /dev/null 2>&1

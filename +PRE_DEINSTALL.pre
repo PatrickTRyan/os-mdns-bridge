@@ -1,0 +1,4 @@
+# Stop the daemon before the plugin files go away.
+if [ -x /usr/local/etc/rc.d/mdns_bridge ]; then
+	/usr/local/etc/rc.d/mdns_bridge onestop > /dev/null 2>&1 || true
+fi
