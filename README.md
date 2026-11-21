@@ -17,17 +17,17 @@ Target: OPNsense 26.7 (FreeBSD 15.1), mdns-bridge 3.1.0.
 
 ## Install
 
-On the firewall, as root (console or SSH, option 8):
+On the firewall, as root (either from the console menu **Option 8** or SSH to the box):
 
-```sh
-fetch https://patricktryan.github.io/os-mdns-bridge/install.sh
-less install.sh        # review it first
-sh install.sh
-```
+`sh fetch https://patricktryan.github.io/os-mdns-bridge/install.sh`
+
+**Review the file if desired** `install.sh`
+
+`sh install.sh`
 
 The script adds this project's signed package repository, backs up
 `/conf/config.xml` to `/root`, and installs `os-mdns-bridge` together with the
-`mdns-bridge` daemon. Then open **Services › mDNS Bridge**.
+`mdns-bridge` daemon. Then from the GUI open **Services › mDNS Bridge** to configure.
 
 ### Updates
 
