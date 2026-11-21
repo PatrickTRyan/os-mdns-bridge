@@ -1,0 +1,87 @@
+# Builds mdns-bridge + os-mdns-bridge in a FreeBSD 15.1 VM (the base of
+# OPNsense 26.7) and, for releases, signs the pkg repository and publishes
+# it to GitHub Pages.
+#
+# Triggers:
+#   - pull request into main: test build only. No signing key is given to
+#     the build and nothing is deployed, so untested code can neither use
+#     the key nor publish packages.
+#   - version tag (v1.0.b1, v1.0, v1.0_1, ...): signed build and deploy.
+#     The tag must match the Makefile version.
+#   - manual run (Actions tab): signed build; deploys only from main, as
+#     allowed by the github-pages environment rules.
+#
+# One-time setup (see README, "Building the repository"):
+#   - Settings > Pages > Source: GitHub Actions
+#   - Settings > Environments > github-pages: allow tag pattern v*
+#   - Settings > Secrets and variables > Actions > PKG_SIGNING_KEY:
+#     the RSA private key in PEM format
+#   - commit the matching public key as packaging/mdnsbridge.pub
+#
+# Each deploy replaces the published site, so only the latest packages are
+# served.
+
+name: Build package repository
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'deploy' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build packages and repository in FreeBSD 15.1
+        uses: vmactions/freebsd-vm@v1
+        env:
+          PKG_SIGNING_KEY: ${{ github.event_name != 'pull_request' && secrets.PKG_SIGNING_KEY || '' }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        with:
+          release: "15.1"
+          usesh: true
+          envs: 'PKG_SIGNING_KEY GITHUB_REF_NAME'
+          prepare: |
+            pkg install -y git
+          run: |
+            set -e
+            # Only a v* tag is checked against the Makefile version.
+            [ "${GITHUB_REF_NAME#v}" != "${GITHUB_REF_NAME}" ] || unset GITHUB_REF_NAME
+            if [ -n "${PKG_SIGNING_KEY}" ]; then
+              # Restrictive permissions for the key file only, not the build.
+              ( umask 077; printf '%s\n' "${PKG_SIGNING_KEY}" > /tmp/repo.key )
+              PKG_SIGNING_KEY_FILE=/tmp/repo.key sh packaging/build-repo.sh
+              rm -f /tmp/repo.key
+            else
+              echo ">>> No signing key (pull request): building an unsigned test repository"
+              ALLOW_UNSIGNED=1 sh packaging/build-repo.sh
+            fi
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,10 @@
+# Load the new syslog-ng filter so the daemon log goes to its own file.
+echo "Restarting syslog for the mDNS Bridge log file"
+/usr/local/sbin/configctl syslog restart > /dev/null 2>&1 || true
+
+# Restart through the control script so new templates and binaries take
+# effect. It does nothing when the service is disabled and keeps the
+# daemon stopped on a CARP BACKUP node. Unconditional on purpose: the
+# daemon may have been stopped by +PRE_DEINSTALL during an upgrade.
+echo "Restarting mDNS Bridge (if enabled)"
+/usr/local/sbin/configctl mdnsbridge restart > /dev/null 2>&1 || true

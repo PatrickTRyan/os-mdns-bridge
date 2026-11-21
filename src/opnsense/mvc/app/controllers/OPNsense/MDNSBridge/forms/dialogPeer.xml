@@ -1,0 +1,53 @@
+<form>
+    <field>
+        <id>peer.enabled</id>
+        <label>Enabled</label>
+        <type>checkbox</type>
+        <grid_view>
+            <formatter>rowtoggle</formatter>
+            <width>6em</width>
+        </grid_view>
+    </field>
+    <field>
+        <id>peer.source</id>
+        <label>From (source)</label>
+        <type>dropdown</type>
+        <help>Packets received on this interface...</help>
+    </field>
+    <field>
+        <id>peer.interface</id>
+        <label>To (outbound)</label>
+        <type>dropdown</type>
+        <help>...when they are sent to this interface. Both must be enabled entries on the Interfaces tab. Only one rule per From/To pair is allowed.</help>
+    </field>
+    <field>
+        <id>peer.mode</id>
+        <label>Mode</label>
+        <type>dropdown</type>
+        <help>This rule replaces the outbound filter of the To interface for packets from the From interface. It can be the opposite type: for example, deny &lt;all&gt; outbound on IoT, with a peer rule that allows _ipp from LAN to IoT.</help>
+    </field>
+    <field>
+        <id>peer.presets</id>
+        <label>Common services</label>
+        <type>select_multiple</type>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>peer.filters</id>
+        <label>Custom filters</label>
+        <type>select_multiple</type>
+        <style>tokenize</style>
+        <allownew>true</allownew>
+        <help>In a deny rule, the single entry &lt;all&gt; blocks everything from the source to this interface.</help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>peer.description</id>
+        <label>Description</label>
+        <type>text</type>
+    </field>
+</form>

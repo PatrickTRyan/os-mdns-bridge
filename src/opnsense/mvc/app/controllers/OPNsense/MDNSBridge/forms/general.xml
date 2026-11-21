@@ -1,59 +1,65 @@
 <form>
-
     <field>
         <type>header</type>
-        <label>General Settings</label>
+        <label>Service</label>
     </field>
-
     <field>
-        <id>mdnsbridge.enabled</id>
+        <id>mdnsbridge.general.enabled</id>
         <label>Enable</label>
         <type>checkbox</type>
-        <help>Enable the mDNS Bridge service.</help>
+        <help>Run mdns-bridge. The daemon needs at least two enabled entries on the Interfaces tab; until then the service stays stopped.</help>
     </field>
-
     <field>
-        <id>mdnsbridge.enablecarp</id>
-        <label>Enable CARP Failover</label>
+        <id>mdnsbridge.general.carp_depend_on</id>
+        <label>CARP dependency</label>
+        <type>dropdown</type>
+        <help>For HA pairs only: run mdns-bridge only while this node is MASTER for the selected CARP virtual IP, so that only one firewall forwards mDNS at a time. Choose a VIP on one of the bridged networks. Leave empty on a single firewall. On the BACKUP node the service is shown as stopped; that is expected. When synchronizing mDNS Bridge to the peer, synchronize Virtual IPs as well.</help>
+    </field>
+    <field>
+        <id>mdnsbridge.general.log_warnings</id>
+        <label>Log decode warnings</label>
         <type>checkbox</type>
-        <help>For CARP high-availability pairs only. When checked, the service runs only while this firewall is CARP master. On a firewall without CARP, the service will not start if this is checked.</help>
+        <help>Start mdns-bridge with -w, which logs mDNS packets it cannot decode and unsupported record types. Useful when a device is not discovered; noisy otherwise.</help>
+        <advanced>true</advanced>
     </field>
-
     <field>
-        <id>mdnsbridge.interfaces</id>
-        <label>Interfaces</label>
+        <type>header</type>
+        <label>Address families</label>
+    </field>
+    <field>
+        <id>mdnsbridge.general.disable_ipv4</id>
+        <label>Disable IPv4</label>
+        <type>checkbox</type>
+        <help>Do not forward mDNS over IPv4 on any interface.</help>
+    </field>
+    <field>
+        <id>mdnsbridge.general.disable_ipv6</id>
+        <label>Disable IPv6</label>
+        <type>checkbox</type>
+        <help>Do not forward mDNS over IPv6 on any interface. IPv4 and IPv6 cannot both be disabled.</help>
+    </field>
+    <field>
+        <type>header</type>
+        <label>Global inbound filter</label>
+    </field>
+    <field>
+        <id>mdnsbridge.general.inbound_mode</id>
+        <label>Mode</label>
+        <type>dropdown</type>
+        <help>Applied to every packet received on any bridged interface, before any per-interface filter. Per-interface filters can narrow this further but cannot widen it. Allow forwards only names that match a listed service; deny forwards everything except names that match.</help>
+    </field>
+    <field>
+        <id>mdnsbridge.general.inbound_presets</id>
+        <label>Common services</label>
         <type>select_multiple</type>
-        <help>Select the interfaces that participate in mDNS forwarding. At least two interfaces must be selected.</help>
+        <help>Common DNS-SD services. Combined with the custom filters below.</help>
     </field>
-
     <field>
-        <id>mdnsbridge.inboundfilterpresets</id>
-        <label>Common Inbound Services</label>
-        <type>select_multiple</type>
-        <help>Select common DNS-SD services that may be received and forwarded by the bridge. These selections are combined with any custom services entered below. Leave both fields empty to allow all inbound services.</help>
-    </field>
-
-    <field>
-        <id>mdnsbridge.allowinboundfilters</id>
-        <label>Custom Inbound Services</label>
+        <id>mdnsbridge.general.inbound_filters</id>
+        <label>Custom filters</label>
         <type>select_multiple</type>
         <style>tokenize</style>
         <allownew>true</allownew>
-        <help>Enter additional DNS-SD service names, for example _matter or _hue. The ._tcp and .local suffixes are optional. Names are case-sensitive. Custom values are combined with the common services selected above. Leave both fields empty to allow all inbound services.</help>
+        <help>Additional filters, one per entry. A filter is one or more labels separated by dots: a service such as _matter, a host name such as Office-Printer, or both, such as Office-Printer._ipp. Labels are case sensitive. _tcp, _udp and local are not needed. In allow lists, list whole services; host names are best used in deny lists.</help>
     </field>
-    
-    <field>
-        <id>mdnsbridge.disableipv4</id>
-        <label>Disable IPv4</label>
-        <type>checkbox</type>
-        <help>Disable mDNS forwarding for IPv4 traffic.</help>
-    </field>
-
-    <field>
-        <id>mdnsbridge.disableipv6</id>
-        <label>Disable IPv6</label>
-        <type>checkbox</type>
-        <help>Disable mDNS forwarding for IPv6 traffic. IPv4 and IPv6 cannot both be disabled.</help>
-    </field>
-
 </form>
