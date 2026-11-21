@@ -23,6 +23,11 @@ set -eu
 
 SITE=${MDNSBRIDGE_SITE:-https://patricktryan.github.io/os-mdns-bridge}
 REPO_NAME=mdnsbridge
+# OPNsense's own plugin bookkeeping (system/firmware/plugins in config.xml).
+# The firmware GUI calls this for every plugin it installs or removes; a
+# plugin installed with pkg alone shows as "(misconfigured)" and would not
+# be restored by a plugin sync after a configuration restore.
+REGISTER=/usr/local/opnsense/scripts/firmware/register.php
 REPO_CONF=/usr/local/etc/pkg/repos/${REPO_NAME}.conf
 KEY_DIR=/usr/local/etc/pkg/keys
 KEY_FILE=${KEY_DIR}/${REPO_NAME}.pub
@@ -38,6 +43,8 @@ uninstall()
 	say "Stopping and removing os-mdns-bridge and mdns-bridge"
 	/usr/local/etc/rc.d/mdns_bridge onestop > /dev/null 2>&1 || true
 	pkg delete -y os-mdns-bridge os-mdns-bridge-devel mdns-bridge 2> /dev/null || true
+	"${REGISTER}" remove os-mdns-bridge > /dev/null 2>&1 || true
+	"${REGISTER}" remove os-mdns-bridge-devel > /dev/null 2>&1 || true
 	rm -f /etc/rc.conf.d/mdns_bridge /var/run/mdns_bridge.carp_master \
 	    /usr/local/etc/mdns-bridge.conf "${REPO_CONF}" "${KEY_FILE}"
 	say "Removed. Your mDNS Bridge settings remain in /conf/config.xml and"
@@ -116,6 +123,7 @@ if pkg info -e os-mdns-bridge-devel; then
 	say "Replacing development package os-mdns-bridge-devel $(pkg query %v os-mdns-bridge-devel)"
 	/usr/local/etc/rc.d/mdns_bridge onestop > /dev/null 2>&1 || true
 	pkg delete -y os-mdns-bridge-devel
+	"${REGISTER}" remove os-mdns-bridge-devel > /dev/null 2>&1 || true
 fi
 
 if pkg info -e os-mdns-bridge; then
@@ -125,6 +133,9 @@ else
 	say "Installing os-mdns-bridge"
 	pkg install -y -r "${REPO_NAME}" os-mdns-bridge
 fi
+
+# Record the plugin as installed, exactly as the firmware GUI does.
+"${REGISTER}" install os-mdns-bridge || say "WARNING: could not register the plugin with the firmware page"
 
 say "Installed: os-mdns-bridge $(pkg query %v os-mdns-bridge), mdns-bridge $(pkg query %v mdns-bridge)"
 say "Configure it under Services > mDNS Bridge. Future updates arrive via System > Firmware."
