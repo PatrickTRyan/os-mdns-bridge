@@ -5,7 +5,15 @@ multicast DNS (Bonjour / DNS-SD) forwarding between network segments, with
 service filtering globally, per interface in both directions, and per
 source/destination interface pair.
 
-Tested target: OPNsense 26.7 (FreeBSD 15.1), mdns-bridge 3.1.0.
+Target: OPNsense 26.7 (FreeBSD 15.1), mdns-bridge 3.1.0.
+
+> **Beta (1.0.b1).** Installation, upgrade from 0.1, configuration
+> generation and service control have been tested on OPNsense 26.7 with LAN
+> and VLAN interfaces. Filtering on live traffic, CARP failover on a real HA
+> pair and reboot behaviour are still being tested. Please report problems at
+> <https://github.com/PatrickTRyan/os-mdns-bridge/issues> with the output of
+> `configctl mdnsbridge check` and the last lines of
+> **Services › mDNS Bridge › Log File**.
 
 ## Install
 
@@ -42,6 +50,13 @@ sh install.sh uninstall
 
 This removes both packages and the repository. Settings stay in
 `config.xml` and are used again if you reinstall.
+
+### Do not combine with mDNS Repeater
+
+Run either mdns-bridge or the `os-mdns-repeater` plugin, not both on the same
+interfaces: two forwarders produce duplicate announcements. Disable
+**Services › mDNS Repeater** (or remove `os-mdns-repeater`) before enabling
+mDNS Bridge.
 
 ## How filtering works
 
@@ -96,6 +111,15 @@ which on an HA pair means both nodes forward mDNS.
 
 ## Troubleshooting
 
+- If Apply reports that the service did not start, the page shows why. The
+  **Generated configuration** tab also lists, per interface, whether it will
+  be bridged and over which address families. From a shell:
+  `configctl mdnsbridge check`.
+- Every bridged interface needs an address (IPv4, or IPv6 including
+  link-local) in a family that at least one other bridged interface also has.
+  A newly created VLAN gets its address only after its interface is saved and
+  applied under **Interfaces**; a VLAN that tracks WAN for IPv6 also needs a
+  free prefix ID, which requires WAN to request a prefix larger than /64.
 - **Services › mDNS Bridge › Log File** holds the daemon's messages and the
   control script's CARP and start/stop decisions.
 - **Log decode warnings** (General tab, advanced) starts the daemon with `-w`.
@@ -144,8 +168,10 @@ openssl rsa -in mdnsbridge.key -pubout -out packaging/mdnsbridge.pub
 
 To release: set `PLUGIN_VERSION` (or `PLUGIN_REVISION`) in `Makefile`, add a
 `pkg-descr` changelog entry, commit, then tag `v<version>` (for example
-`v1.0`, or `v1.0_1` for a revision) and push the tag. The workflow refuses a
-tag that does not match the Makefile.
+`v1.0.b1` for a beta, `v1.0`, or `v1.0_1` for a revision) and push the tag.
+The workflow refuses a tag that does not match the Makefile. pkg sorts
+`1.0.b1` before `1.0`, so beta installs upgrade to the final release
+automatically.
 
 `packaging/build-repo.sh` can also run by hand on FreeBSD 15 or an OPNsense
 26.7 test VM (`ALLOW_UNSIGNED=1` for a local test).

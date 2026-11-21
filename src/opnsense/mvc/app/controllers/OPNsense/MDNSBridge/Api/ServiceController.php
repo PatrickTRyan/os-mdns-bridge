@@ -55,12 +55,31 @@ class ServiceController extends ApiMutableServiceControllerBase
     }
 
     /**
-     * Return the generated mdns-bridge.conf so the engineer can see exactly
-     * what the daemon is given. Read-only; GET is sufficient.
+     * Apply, and when the service fails to start, add the reason: the
+     * interface check (missing devices, interfaces without addresses) or
+     * the daemon's own error. The page shows "detail" in its own panel.
+     */
+    public function reconfigureAction()
+    {
+        $result = parent::reconfigureAction();
+        if (($result['status'] ?? '') !== 'ok' && $this->request->isPost()) {
+            $result['detail'] = trim((string)(new Backend())->configdRun('mdnsbridge check'));
+        }
+        return $result;
+    }
+
+    /**
+     * The generated mdns-bridge.conf plus the interface check, so the
+     * engineer can see exactly what the daemon is given and what it will
+     * do with each interface. Read-only.
      */
     public function showconfigAction()
     {
-        $output = (new Backend())->configdRun('mdnsbridge showconfig');
-        return ['status' => 'ok', 'config' => (string)$output];
+        $backend = new Backend();
+        return [
+            'status' => 'ok',
+            'config' => (string)$backend->configdRun('mdnsbridge showconfig'),
+            'check' => trim((string)$backend->configdRun('mdnsbridge check')),
+        ];
     }
 }

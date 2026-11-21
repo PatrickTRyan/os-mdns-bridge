@@ -37,7 +37,7 @@ uninstall()
 {
 	say "Stopping and removing os-mdns-bridge and mdns-bridge"
 	/usr/local/etc/rc.d/mdns_bridge onestop > /dev/null 2>&1 || true
-	pkg delete -y os-mdns-bridge mdns-bridge 2> /dev/null || true
+	pkg delete -y os-mdns-bridge os-mdns-bridge-devel mdns-bridge 2> /dev/null || true
 	rm -f /etc/rc.conf.d/mdns_bridge /var/run/mdns_bridge.carp_master \
 	    /usr/local/etc/mdns-bridge.conf "${REPO_CONF}" "${KEY_FILE}"
 	say "Removed. Your mDNS Bridge settings remain in /conf/config.xml and"
@@ -108,6 +108,15 @@ done
 
 # --- 4. packages ----------------------------------------------------------------
 pkg update -f -r "${REPO_NAME}"
+
+# 0.1 development builds were packaged from the plugins master branch as
+# "os-mdns-bridge-devel". Replace it; settings stay in config.xml and are
+# migrated when the new package installs.
+if pkg info -e os-mdns-bridge-devel; then
+	say "Replacing development package os-mdns-bridge-devel $(pkg query %v os-mdns-bridge-devel)"
+	/usr/local/etc/rc.d/mdns_bridge onestop > /dev/null 2>&1 || true
+	pkg delete -y os-mdns-bridge-devel
+fi
 
 if pkg info -e os-mdns-bridge; then
 	say "Upgrading os-mdns-bridge $(pkg query %v os-mdns-bridge)"

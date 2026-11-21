@@ -15,7 +15,16 @@ WWW: https://github.com/dennypage/mdns-bridge
 Plugin Changelog
 ================
 
-1.0
+1.0.b1 (beta)
+
+* Interface check before start: a missing device or an interface that
+  would not be bridged (no usable address) stops the start with a message
+  naming it, instead of failing silently or bridging only some networks
+* When the service does not start, the reason is shown on the settings
+  page; the Generated configuration tab shows the interface check
+* Replaces os-mdns-bridge-devel builds of 0.1 on installation
+
+1.0 (development, not released)
 
 * Per-interface inbound and outbound filters, peer-specific outbound
   filters, deny lists and the <all> deny-all filter

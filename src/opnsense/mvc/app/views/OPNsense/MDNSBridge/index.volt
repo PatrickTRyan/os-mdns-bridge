@@ -58,7 +58,14 @@
                 saveFormToEndpoint('/api/mdnsbridge/settings/set', 'frm_GeneralSettings', dfObj.resolve, true, dfObj.reject);
                 return dfObj;
             },
-            onAction: function () {
+            onAction: function (data) {
+                /* On failure, show why: missing device, no address, or the daemon's error. */
+                if (data && data.status !== 'ok' && data.detail) {
+                    $('#apply_detail_text').text(data.detail);
+                    $('#apply_detail').show();
+                } else {
+                    $('#apply_detail').hide();
+                }
                 loadGeneratedConfig();
             }
         });
@@ -66,6 +73,7 @@
         function loadGeneratedConfig() {
             ajaxGet('/api/mdnsbridge/service/showconfig', {}, function (data) {
                 $('#generated_config').text(data && data.config ? data.config : '');
+                $('#interface_check').text(data && data.check ? data.check : '');
             });
         }
 
@@ -74,6 +82,11 @@
         updateServiceControlUI('mdnsbridge');
     });
 </script>
+
+<div id="apply_detail" class="alert alert-warning" role="alert" style="display: none;">
+    <strong>{{ lang._('mDNS Bridge did not start:') }}</strong>
+    <div id="apply_detail_text" style="white-space: pre-wrap; margin-top: 5px;"></div>
+</div>
 
 <ul class="nav nav-tabs" data-tabs="tabs" id="maintabs">
     <li class="active"><a data-toggle="tab" href="#general">{{ lang._('General') }}</a></li>
@@ -103,6 +116,10 @@
             {{ lang._('The configuration file generated for mdns-bridge from the settings above, as last applied. Read-only.') }}
         </div>
         <pre id="generated_config" style="margin: 0 15px 15px 15px; white-space: pre-wrap;"></pre>
+        <div class="col-md-12 __mb">
+            {{ lang._('Interface check (current state of the system):') }}
+        </div>
+        <pre id="interface_check" style="margin: 0 15px 15px 15px; white-space: pre-wrap;"></pre>
     </div>
 </div>
 
