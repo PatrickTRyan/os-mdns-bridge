@@ -51,11 +51,11 @@ sh install.sh uninstall
 This removes both packages and the repository. Settings stay in
 `config.xml` and are used again if you reinstall.
 
-### Do not combine with mDNS Repeater
+### Do not combine with mDNS Repeater or netflector
 
-Run either mdns-bridge or the `os-mdns-repeater` plugin, not both on the same
+Run only one mDNS bridge / repeater plugin, not multiples on the same
 interfaces: two forwarders produce duplicate announcements. Disable
-**Services › mDNS Repeater** (or remove `os-mdns-repeater`) before enabling
+**Services › mDNS Repeater (or netflector)** (or remove `os-mdns-repeater` or `os-netflector`) before enabling
 mDNS Bridge.
 
 ## How filtering works
