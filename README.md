@@ -65,7 +65,7 @@ A packet received on interface A and forwarded to interface B passes through:
 1. the **global inbound** filter (General tab), for every packet;
 2. A's **inbound** filter (Interfaces tab): what devices on A may advertise;
 3. B's **outbound** filter (Interfaces tab): what devices on B may see.
-   A **peer rule** "from A to B" (Peer rules tab) *replaces* B's outbound
+   A **peer rule** "from A to B" (Peer rules tab) _replaces_ B's outbound
    filter for packets from A, and may be the opposite type.
 
 Each filter is `allow` (only matching names pass) or `deny` (matching names are
@@ -77,11 +77,11 @@ globally).
 
 ### Example: IoT sees only printers and casting from LAN
 
-| Tab | Entry | Setting |
-|---|---|---|
-| Interfaces | LAN | no filters |
-| Interfaces | IoT | Inbound: allow `_airplay, _raop, _googlecast, _hap`; Outbound: deny `<all>` |
-| Peer rules | From LAN → To IoT | allow `_ipp, _ipps` |
+| Tab        | Entry             | Setting                                                                     |
+| ---------- | ----------------- | --------------------------------------------------------------------------- |
+| Interfaces | LAN               | no filters                                                                  |
+| Interfaces | IoT               | Inbound: allow `_airplay, _raop, _googlecast, _hap`; Outbound: deny `<all>` |
+| Peer rules | From LAN → To IoT | allow `_ipp, _ipps`                                                         |
 
 LAN clients discover IoT's AirPlay, Cast and HomeKit devices. IoT devices
 discover only LAN's printers and nothing else.
@@ -90,7 +90,7 @@ The **Generated configuration** tab shows the exact file given to the daemon.
 
 ## Firewall rules
 
-mdns-bridge only forwards *discovery*. Two kinds of rules are still needed:
+mdns-bridge only forwards _discovery_. Two kinds of rules are still needed:
 
 - **Discovery traffic to the firewall** on each bridged interface:
   UDP to `224.0.0.251` and `ff02::fb` port 5353. The default LAN rule allows
@@ -130,55 +130,6 @@ which on an HA pair means both nodes forward mDNS.
   service, then from a shell run
   `mdns-bridge -f -c /usr/local/etc/mdns-bridge.conf` and press Ctrl-C.
   Do not do this while the service is running: both instances would forward.
-
-## Development
-
-Edit on a test VM and install the working tree with the official framework:
-
-```sh
-pkg install -y git
-git clone -b stable/26.7 https://github.com/opnsense/plugins /usr/plugins
-cp -R Makefile pkg-descr src +*.pre +*.post /usr/plugins/net/mdns-bridge/
-make -C /usr/plugins/net/mdns-bridge upgrade
-```
-
-Use `stable/26.7`, not `master`: master builds a package named
-`os-mdns-bridge-devel`.
-
-Text files must have LF line endings (`.gitattributes` enforces this); a CRLF
-after a `#!` line stops a script from running on the firewall.
-
-## Building the repository
-
-Packages are built by `.github/workflows/build-repo.yml` in a FreeBSD 15.1 VM
-and published to GitHub Pages.
-
-One-time setup:
-
-```sh
-openssl genrsa -out mdnsbridge.key 4096
-openssl rsa -in mdnsbridge.key -pubout -out packaging/mdnsbridge.pub
-```
-
-1. Commit `packaging/mdnsbridge.pub`. Keep `mdnsbridge.key` offline and backed
-   up; `*.key` is git-ignored.
-2. Repository **Settings › Secrets and variables › Actions**: add secret
-   `PKG_SIGNING_KEY` with the contents of `mdnsbridge.key`.
-3. **Settings › Pages › Source**: GitHub Actions.
-
-To release: set `PLUGIN_VERSION` (or `PLUGIN_REVISION`) in `Makefile`, add a
-`pkg-descr` changelog entry, commit, then tag `v<version>` (for example
-`v1.0.b1` for a beta, `v1.0`, or `v1.0_1` for a revision) and push the tag.
-The workflow refuses a tag that does not match the Makefile. pkg sorts
-`1.0.b1` before `1.0`, so beta installs upgrade to the final release
-automatically.
-
-`packaging/build-repo.sh` can also run by hand on FreeBSD 15 or an OPNsense
-26.7 test VM (`ALLOW_UNSIGNED=1` for a local test).
-
-If the signing key ever changes, existing installs refuse the new key until
-`/usr/local/etc/pkg/keys/mdnsbridge.pub` is removed and `install.sh` rerun.
-Say so in the release notes.
 
 ## License
 
