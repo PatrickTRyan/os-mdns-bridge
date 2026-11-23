@@ -12,29 +12,34 @@ Denny Page.
 
 WWW: https://github.com/dennypage/mdns-bridge
 
-Plugin Changelog
-================
+# Plugin Changelog
 
-1.0.b1 (beta)
+1.0.b1_1
 
-* Interface check before start: a missing device or an interface that
+- Only members of wheel and wwwonly may stop the service through
+  configd (as OPNsense plugins #5947)
+- install.sh registers the plugin with the firmware page
+
+  1.0.b1 (beta)
+
+- Interface check before start: a missing device or an interface that
   would not be bridged (no usable address) stops the start with a message
   naming it, instead of failing silently or bridging only some networks
-* When the service does not start, the reason is shown on the settings
+- When the service does not start, the reason is shown on the settings
   page; the Generated configuration tab shows the interface check
-* Replaces os-mdns-bridge-devel builds of 0.1 on installation
+- Replaces os-mdns-bridge-devel builds of 0.1 on installation
 
-1.0 (development, not released)
+  1.0 (development, not released)
 
-* Per-interface inbound and outbound filters, peer-specific outbound
+- Per-interface inbound and outbound filters, peer-specific outbound
   filters, deny lists and the <all> deny-all filter
-* Per-interface IPv4/IPv6 control and optional decode warnings (-w)
-* CARP support now depends on one selected CARP VIP
-* Apply no longer reports an error on a CARP BACKUP node
-* Dedicated log file and a read-only view of the generated configuration
-* Restart after an address change on a bridged interface
-* Settings from 0.1 are migrated automatically
+- Per-interface IPv4/IPv6 control and optional decode warnings (-w)
+- CARP support now depends on one selected CARP VIP
+- Apply no longer reports an error on a CARP BACKUP node
+- Dedicated log file and a read-only view of the generated configuration
+- Restart after an address change on a bridged interface
+- Settings from 0.1 are migrated automatically
 
-0.1
+  0.1
 
-* Initial release
+- Initial release
